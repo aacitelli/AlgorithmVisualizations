@@ -15,8 +15,10 @@ body
 {
     margin-top: 20px;
 
-    width: calc(100vw - 20px);
+    width: calc(100vw - 40px);
     height: calc(100vh - 250px);
+
+    background-color: rgb(250, 200, 200);
 
     border: 1px black solid;
 }
@@ -39,4 +41,6 @@ body
 
     border-radius: 10px;
     font-size: 18px;
+
+    outline: none;
 }

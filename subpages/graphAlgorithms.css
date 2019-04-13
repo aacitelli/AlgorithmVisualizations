@@ -11,8 +11,9 @@ body {
 
 #canvas {
   margin-top: 20px;
-  width: calc(100vw - 20px);
+  width: calc(100vw - 40px);
   height: calc(100vh - 250px);
+  background-color: #fac8c8;
   border: 1px black solid;
 }
 
@@ -30,5 +31,6 @@ body {
   border: 1px solid black;
   border-radius: 10px;
   font-size: 18px;
+  outline: none;
 }
 /*# sourceMappingURL=graphAlgorithms.css.map */
