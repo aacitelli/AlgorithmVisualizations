@@ -113,16 +113,12 @@ document.addEventListener("mousedown", function(event)
     // If we're currently in "draw connections" mode
     if (currentMode === 6)
     {
-        console.log("Mouse pressed down in draw connections mode.");
-
         let absoluteCoords = new Point(event.x, event.y);
 
         // If the click was inside the canvas
         if (absoluteCoords.x > (document.body.clientWidth - canvasWidth) / 2 && absoluteCoords.x < (document.body.clientWidth - canvasWidth) / 2 + canvasWidth && 
         absoluteCoords.y > 20 && absoluteCoords.y < 20 + canvasHeight)
         {
-            console.log("Mousedown registered inside canvas.");
-
             let canvasCoords = absoluteToCanvas(absoluteCoords);
 
             let candidateStartNodeID = getPointNodeID(canvasCoords);
@@ -132,13 +128,8 @@ document.addEventListener("mousedown", function(event)
                 return;
             }
 
-            console.log("Start node registered!");
-
             // Only gets to this point if it found a valid start node 
             startNodeID = candidateStartNodeID;
-            console.log("Start Node ID: " + startNodeID);
-            console.log("nodeList: ");
-            console.log(nodeList);
         }
     }
 });
@@ -148,15 +139,12 @@ document.addEventListener("mouseup", function(event)
     // If we're currently in "draw connections" mode and we have a valid start node 
     if (currentMode === 6 && startNodeID !== -1)
     {
-        console.log("Mouse lifted up in draw connections mode.");
-
         let absoluteCoords = new Point(event.x, event.y);
 
         // If the click was inside the canvas
         if (absoluteCoords.x > (document.body.clientWidth - canvasWidth) / 2 && absoluteCoords.x < (document.body.clientWidth - canvasWidth) / 2 + canvasWidth && 
         absoluteCoords.y > 20 && absoluteCoords.y < 20 + canvasHeight)
         {
-            console.log("Mouseup registered inside canvas.");
 
             let canvasCoords = absoluteToCanvas(absoluteCoords);
 
@@ -173,16 +161,9 @@ document.addEventListener("mouseup", function(event)
                 return;
             }
 
-            console.log("End node registered!");
-            console.log("End Node ID: " + endNodeID);
-            console.log("nodeList: ");
-            console.log(nodeList);
-
             // Only gets to this point if it found a valid end node 
             if (!lineExists(startNodeID, endNodeID))
             {
-                console.log("startNodeID: " + startNodeID);
-                console.log("endNodeID: " + endNodeID);
                 drawLine(startNodeID, endNodeID);
             }
         }
@@ -235,62 +216,42 @@ drawConnectionButton.addEventListener("click", function()
 //! SEARCH ALGORITHMS
 function bfs(startNodeID)
 {
+    /* Algorithm: 
 
+        Visit the start node. 
+        Visit all neighbors of the start node. 
+        Visit all neighbors of the neighbors of the start node. 
+        Continue the process until all vertices have been visited.
+
+    */
 }
 
 function dfs(startNodeID)
 {
-    
+    /* Algorithm:
+
+        Put start node under consideration. 
+        Run the algorithm on all neighbors. 
+        If the current node has no neighbors, visit this node and return
+            - This is the exit case; The method is recursive 
+
+    */
 }
 
 //! EDGE MANAGEMENT FUNCTIONS
 function lineExists(startNodeID, endNodeID)
 {
-    // Finding which index of nodeList corresponds to each node 
-    var startNodeIndex = -1, endNodeIndex = -1;
-    for (let i = 0; i < nodeList.length; i++)
-    {
-        if (nodeList[i].id === startNodeID)
-        {
-            console.log("Start node found at index " + i);
-            startNodeIndex = i;
-        }
-
-        if (nodeList[i].id === endNodeID)
-        {
-            console.log("End node found at index " + i);
-            endNodeIndex = i;
-        }
-
-        // Case for breakout out of loop early b/c we got what we came for 
-        if (startNodeIndex !== -1 && endNodeIndex !== -1)
-            break;
-    }
-
-    if (startNodeIndex === -1)
-    {
-        console.error("Could not find start node with given index.");
-        return true;
-    }
-
-    if (endNodeIndex === -1)
-    {
-        console.error("Could not find end node with given index.");
-        return true;
-    }        
-    
-    // Iterating through the list of edges to see if the current one exists 
     for (let i = 0; i < edgeList.length; i++)
     {
-        // If a line between those two IDs exists already
-        if (edgeList.startNodeID === nodeList[startNodeIndex].id && edgeList.endNodeID === nodeList[endNodeIndex].id)
+        if (edgeList[i].startNodeID === startNodeID && edgeList[i].endNodeID === endNodeID ||
+            edgeList[i].endNodeID === startNodeID && edgeList[i].startNodeID === endNodeID)
         {
+            console.log("Edge already exists!");
             return true;
         }
     }
 
-    // If it got to this point, it found no conflicting edges that already exist, lineExists = false 
-    return false;
+    return false;  
 }
 
 function drawLine(startNodeID, endNodeID)
@@ -333,16 +294,18 @@ function drawLine(startNodeID, endNodeID)
     ctx.moveTo(startPoint.x, 500 - startPoint.y);
     ctx.lineTo(endPoint.x, 500 - endPoint.y);
     ctx.stroke();  
+
+    // The line was drawn, so we can add it to the edge list 
+    edgeList.push({startNodeID: startNode.id, endNodeID: endNode.id});
+    startNode.connections.push(endNode.id);
+
+    console.log("Edge List: ");
+    console.log(edgeList);
 }
 
 function getStartPoint(startPoint, endPoint)
 {
-    console.log("Start Origin: (" + startPoint.x + ", " + startPoint.y + ")");
-    console.log("End Origin: (" + endPoint.x + ", " + endPoint.y + ")");
-
-    // Thanks to https://math.stackexchange.com/questions/707673/find-angle-in-degrees-from-one-point-to-another-in-2d-space for the calculation formula 
     var desiredAngle = getDesiredAngle(startPoint, endPoint) % 360;
-    console.log("Calculated Angle (in degrees): " + radianToDegree(desiredAngle));
 
     // First Quadrant (0-90)
     if (desiredAngle >= 0 && desiredAngle < 90)
@@ -372,9 +335,6 @@ function getStartPoint(startPoint, endPoint)
         var xCoord = startPoint.x + (20 * Math.sin(desiredAngle));
         var yCoord = startPoint.y + (20 * Math.cos(desiredAngle));
     }
-
-    console.log("End X-Coord: " + xCoord);
-    console.log("End Y-Coord: " + yCoord); 
     
     return new Point(xCoord, yCoord);
 }
@@ -509,9 +469,6 @@ function getDesiredAngle(startPoint, endPoint)
 {
     var x_dot = endPoint.x - startPoint.x;
     var y_dot = endPoint.y - startPoint.y;
-
-    console.log("x_dot: " + x_dot);
-    console.log("y_dot: " + y_dot);
 
     // First Quadrant
     if (x_dot >= 0 && y_dot >= 0)
