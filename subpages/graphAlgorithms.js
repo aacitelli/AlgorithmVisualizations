@@ -42,7 +42,7 @@ function Node(x, y, id, connections)
 }
 
 // Holds currently taken ID numbers
-var nodeIDs = [];
+var nodeList = [];
 
 document.addEventListener("click", function(event)
 {
@@ -51,7 +51,7 @@ document.addEventListener("click", function(event)
 
     // Checks if the click was inside the canvas 
     // Todo - Figure out how to make this not a hardcoded value, though theoretically a hardcoded value scales appropriately 
-    if (clickCoordinates.x > 20 && clickCoordinates.x < 20 + canvasWidth && 
+    if (clickCoordinates.x > 20 && clickCoordinates.x < (document.body.clientWidth - 500) / 2 + canvasWidth && 
         clickCoordinates.y > 20 && clickCoordinates.y < 20 + canvasHeight)
     {
         switch(currentMode)
@@ -62,7 +62,7 @@ document.addEventListener("click", function(event)
             
             // New Node
             case 1: 
-                makeNewNode(clickCoordinates.x, clickCoordinates.y);
+                makeNewNode(absoluteToCanvas(new Point(clickCoordinates.x, clickCoordinates.y)));
                 break;
 
             // Delete Node
@@ -111,9 +111,36 @@ function updateCanvasSizing()
 }
 
 // The canvas is just straight-up a 20, 20 offset from the top left of the page, which makes this much easier
-function convertAbsoluteCoordsToCanvasCoords(point)
+function absoluteToCanvas(point)
 {
-    return new Point(point.x - 20, point.y - 20);
+    console.log("absoluteToCanvas input: ");
+    console.log("point.x: " + point.x);
+    console.log("point.y: " + point.y);
+
+    console.log("Client Width: " + document.body.clientWidth);
+    console.log("Pixels to the LEft: " + (document.body.clientWidth - 500) / 2);
+
+    point.x -= (document.body.clientWidth - 500) / 2;
+    point.y -= 20;
+
+    console.log("absolutetoCanvas return: ");
+    console.log(point);
+
+    return point;
+}
+
+function makeNewNode(point)
+{
+    ctx.fillRect(5, 5, 20, 20);
+    console.log("Making a white square at canvas coordinates x = " + point.x + ", y = " + point.y);
+    // Adds it on as the new last element and makes it have zero connections
+    nodeList.push(new Node(point.x, point.y, nodeList.length, []));
+
+    ctx.fillStyle = "rgb(255, 255, 255)";
+    ctx.strokeStyle = "rgb(0, 0, 0)";
+
+    console.log("Filling Rectangle at canvas x = " + (point.x - 10) + ", y = " + (point.y - 10));
+    ctx.fillRect(point.x - 10, point.y - 10, 20, 20);
 }
 
 // * Button Graphical Utilities
@@ -142,7 +169,7 @@ function updateActiveButton()
             dfsButton.style.backgroundColor = "rgb(0, 80, 190)";
             break;
         case 6:
-            drawConnectionButton.style.backgroundcolor = "rgb(0, 80, 190)";
+            drawConnectionButton.style.backgroundColor = "rgb(0, 80, 190)";
             break;
         default: 
             console.log("currentMode was a weird value."); 

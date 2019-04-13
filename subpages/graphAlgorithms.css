@@ -11,8 +11,10 @@ body {
 
 #canvas {
   margin-top: 20px;
-  width: calc(100vw - 40px);
-  height: calc(100vh - 250px);
+  /* Todo - Get these to work without weirdly scaling the canvas 
+    width: calc(100vw - 40px);
+    height: calc(100vh - 250px);
+    */
   background-color: #c8c8c8;
   border: 1px black solid;
 }
