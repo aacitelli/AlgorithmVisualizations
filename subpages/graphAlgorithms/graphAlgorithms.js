@@ -1,3 +1,4 @@
+//! GLOBAL VARIABLES AND GENERAL SETUP 
 // The canvas that will display everything that's actually processed here in the code 
 var canvas = document.getElementById("canvas");
 var canvasWidth = 500, canvasHeight = 500;
@@ -8,7 +9,6 @@ ctx.font = "16pt Arial";
 
 // Used to show at the end what order the algorithm went in 
 var visitOrder = document.getElementById("visitOrder");
-
 
 // Buttons are used a lot so they're defined globally 
 var clearButton = document.getElementById("clearButton");
@@ -23,6 +23,16 @@ var drawConnectionButton = document.getElementById("drawConnectionButton");
 var startNodeID = -1;
 var currentMode = 0;
 
+// Holds currently taken ID numbers
+var nodeList = [];
+
+// Tracks the next available ID 
+var currentID = 0;
+
+// Holds edges in format {startNodeID, endNodeID}
+var edgeList = [];
+
+//! CUSTOM CLASSES
 // Generic point object 
 function Point(x, y)
 {
@@ -49,16 +59,7 @@ function Edge(startNodeID, endNodeID)
     this.endNodeID = endNodeID;
 }
 
-// Holds currently taken ID numbers
-var nodeList = [];
-
-// Tracks the next available ID 
-var currentID = 0;
-
-// Holds edges in format {startNodeID, endNodeID}
-var edgeList = [];
-
-// Generic click listener 
+//! EVENT LISTENERS
 document.addEventListener("click", function(event)
 {
     // These are absolute click coordinates
@@ -188,6 +189,50 @@ document.addEventListener("mouseup", function(event)
     }    
 });
 
+clearButton.addEventListener("click", function()
+{
+    currentMode = 0;
+    clearCanvas();
+    updateActiveButton();
+});
+
+newNodeButton.addEventListener("click", function()
+{
+    currentMode = 1;
+    updateActiveButton();
+});
+
+deleteNodeButton.addEventListener("click", function()
+{
+    currentMode = 2;
+    updateActiveButton();
+});
+
+nodeSelectButton.addEventListener("click", function()
+{
+    currentMode = 3;
+    updateActiveButton();
+});
+
+bfsButton.addEventListener("click", function()
+{
+    currentMode = 4;
+    updateActiveButton();
+});
+
+dfsButton.addEventListener("click", function()
+{
+    currentMode = 5;
+    updateActiveButton();
+});
+
+drawConnectionButton.addEventListener("click", function()
+{
+    currentMode = 6;
+    updateActiveButton();
+});
+
+//! EDGE MANAGEMENT FUNCTIONS
 function lineExists(startNodeID, endNodeID)
 {
     // Finding which index of nodeList corresponds to each node 
@@ -279,46 +324,6 @@ function drawLine(startNodeID, endNodeID)
     ctx.stroke();  
 }
 
-// Fixes canvas coordinates to follow the same sign conventions as the unit circle
-// This function is used for trig functions, which depend on a consistent frame of reference 
-function canvasCoordinateFix(topLeftPoint)
-{
-    return new Point(topLeftPoint.x, 500 - topLeftPoint.y);
-}
-
-function getDesiredAngle(startPoint, endPoint)
-{
-    var x_dot = endPoint.x - startPoint.x;
-    var y_dot = endPoint.y - startPoint.y;
-
-    console.log("x_dot: " + x_dot);
-    console.log("y_dot: " + y_dot);
-
-    // First Quadrant
-    if (x_dot >= 0 && y_dot >= 0)
-    {
-        return Math.atan(y_dot / x_dot);
-    }
-
-    // Second Quadrant
-    else if (x_dot < 0 && y_dot >= 0)
-    {
-        return degreeToRadian(90) + Math.atan(-x_dot / y_dot);
-    }
-
-    // Third Quadrant
-    else if (x_dot < 0 && y_dot < 0)
-    {
-        return degreeToRadian(180) + Math.atan(-y_dot / -x_dot);
-    }
-
-    // Fourth Quadrant 
-    else 
-    {
-        return degreeToRadian(270) + Math.atan(x_dot / -y_dot);
-    }
-}
-
 function getStartPoint(startPoint, endPoint)
 {
     console.log("Start Origin: (" + startPoint.x + ", " + startPoint.y + ")");
@@ -363,22 +368,7 @@ function getStartPoint(startPoint, endPoint)
     return new Point(xCoord, yCoord);
 }
 
-function radianToDegree(radianValue)
-{
-    return radianValue * 180 / Math.PI;
-}
-
-function degreeToRadian(degreeValue)
-{
-    return degreeValue * Math.PI / 180;
-}
-
-// Distance formula 
-function distance(x1, y1, x2, y2)
-{
-    return Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
-}
-
+//! NODE MANAGEMENT FUNCTIONS
 function getPointNodeID(point)
 {
     for (let i = 0; i < nodeList.length; i++)
@@ -392,25 +382,6 @@ function getPointNodeID(point)
 
     // If it looped through all the nodes and didn't find anything, return -1 to signify it wasn't able to find a node 
     return -1;
-}
-
-function clearCanvas()
-{
-    ctx.fillStyle = "rgb(200, 200, 200)";
-    ctx.fillRect(0, 0, canvasWidth, canvasHeight);
-
-    // Gotta reset the node/edge lists 
-    nodeList = [];
-    edgeList = [];
-    currentID = 0;
-}
-
-function absoluteToCanvas(point)
-{
-    point.x -= (document.body.clientWidth - 500) / 2;
-    point.y -= 20;
-
-    return point;
 }
 
 function makeNewNode(point)
@@ -446,30 +417,6 @@ function makeNewNode(point)
         ctx.fillText("" + currentNode.id, currentNode.x - 5, currentNode.y + 7);
     else 
         ctx.fillText("" + currentNode.id, currentNode.x - 13, currentNode.y + 7);
-}
-
-// Makes code much more readable 
-function setFillStyle(strInput)
-{
-    if (strInput.toLowerCase() === "gray" || strInput.toLowerCase() === "grey") 
-    {
-        ctx.fillStyle = "rgb(200, 200, 200)";
-        ctx.strokeStyle = "rgb(200, 200, 200)";
-    }
-
-    else if (strInput.toLowerCase() === "black") 
-    {
-        ctx.fillStyle = "rgb(0, 0, 0)";
-        ctx.strokeStyle = "rgb(0, 0, 0)";
-    }
-    
-    else if (strInput.toLowerCase() === "white") 
-    {
-        ctx.fillStyle = "rgb(255, 255, 255)";
-        ctx.strokeStyle = "rgb(255, 255, 255)";
-    }
-    
-    else console.error("Tried to set fill color to unsupported value.");
 }
 
 function selectNode(point)
@@ -539,7 +486,106 @@ function deleteNode(point)
     }
 }
 
-// * Button Graphical Utilities
+//! UTILITY FUNCTIONS 
+// Fixes canvas coordinates to follow the same sign conventions as the unit circle
+// This function is used for trig functions, which depend on a consistent frame of reference 
+function canvasCoordinateFix(topLeftPoint)
+{
+    return new Point(topLeftPoint.x, 500 - topLeftPoint.y);
+}
+
+function getDesiredAngle(startPoint, endPoint)
+{
+    var x_dot = endPoint.x - startPoint.x;
+    var y_dot = endPoint.y - startPoint.y;
+
+    console.log("x_dot: " + x_dot);
+    console.log("y_dot: " + y_dot);
+
+    // First Quadrant
+    if (x_dot >= 0 && y_dot >= 0)
+    {
+        return Math.atan(y_dot / x_dot);
+    }
+
+    // Second Quadrant
+    else if (x_dot < 0 && y_dot >= 0)
+    {
+        return degreeToRadian(90) + Math.atan(-x_dot / y_dot);
+    }
+
+    // Third Quadrant
+    else if (x_dot < 0 && y_dot < 0)
+    {
+        return degreeToRadian(180) + Math.atan(-y_dot / -x_dot);
+    }
+
+    // Fourth Quadrant 
+    else 
+    {
+        return degreeToRadian(270) + Math.atan(x_dot / -y_dot);
+    }
+}
+
+function radianToDegree(radianValue)
+{
+    return radianValue * 180 / Math.PI;
+}
+
+function degreeToRadian(degreeValue)
+{
+    return degreeValue * Math.PI / 180;
+}
+
+// Distance formula 
+function distance(x1, y1, x2, y2)
+{
+    return Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
+}
+
+function clearCanvas()
+{
+    ctx.fillStyle = "rgb(200, 200, 200)";
+    ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+
+    // Gotta reset the node/edge lists 
+    nodeList = [];
+    edgeList = [];
+    currentID = 0;
+}
+
+function absoluteToCanvas(point)
+{
+    point.x -= (document.body.clientWidth - 500) / 2;
+    point.y -= 20;
+
+    return point;
+}
+
+// Makes code much more readable 
+function setFillStyle(strInput)
+{
+    if (strInput.toLowerCase() === "gray" || strInput.toLowerCase() === "grey") 
+    {
+        ctx.fillStyle = "rgb(200, 200, 200)";
+        ctx.strokeStyle = "rgb(200, 200, 200)";
+    }
+
+    else if (strInput.toLowerCase() === "black") 
+    {
+        ctx.fillStyle = "rgb(0, 0, 0)";
+        ctx.strokeStyle = "rgb(0, 0, 0)";
+    }
+    
+    else if (strInput.toLowerCase() === "white") 
+    {
+        ctx.fillStyle = "rgb(255, 255, 255)";
+        ctx.strokeStyle = "rgb(255, 255, 255)";
+    }
+    
+    else console.error("Tried to set fill color to unsupported value.");
+}
+
 function updateActiveButton()
 {
     resetAllButtonColors();
@@ -583,50 +629,3 @@ function resetAllButtonColors()
     dfsButton.style.backgroundColor = "rgb(0, 120, 255)";
     drawConnectionButton.style.backgroundColor = "rgb(0, 120, 255)";
 }
-
-// * Button Event Listeners
-clearButton.addEventListener("click", function()
-{
-    currentMode = 0;
-    clearCanvas();
-    updateActiveButton();
-});
-
-newNodeButton.addEventListener("click", function()
-{
-    currentMode = 1;
-    updateActiveButton();
-});
-
-deleteNodeButton.addEventListener("click", function()
-{
-    currentMode = 2;
-    updateActiveButton();
-});
-
-nodeSelectButton.addEventListener("click", function()
-{
-    currentMode = 3;
-    updateActiveButton();
-});
-
-bfsButton.addEventListener("click", function()
-{
-    currentMode = 4;
-    updateActiveButton();
-});
-
-dfsButton.addEventListener("click", function()
-{
-    currentMode = 5;
-    updateActiveButton();
-});
-
-drawConnectionButton.addEventListener("click", function()
-{
-    currentMode = 6;
-    updateActiveButton();
-})
-
-
-
