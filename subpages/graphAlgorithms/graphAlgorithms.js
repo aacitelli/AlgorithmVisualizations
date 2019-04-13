@@ -239,9 +239,6 @@ function lineExists(startNodeID, endNodeID)
 
 function drawLine(startNodeID, endNodeID)
 {
-    console.log("nodeList: ");
-    console.log(nodeList);
-
     // Finding the two relevant index values in nodeList
     var startNodeIndex = -1, endNodeIndex = -1;
     for (let i = 0; i < nodeList.length; i++)
@@ -342,12 +339,8 @@ function drawLine(startNodeID, endNodeID)
         currentMinEndDistance = distance(endBottomRightX, endBottomRightY, nodeList[endNodeIndex].x, nodeList[endNodeIndex].y);
     }
 
-    console.log("Drawing line between the following two coordinates: ");
-    console.log("Start: (" + currentStartMinX + ", " + currentStartMinY + ")");
-    console.log("End: (" + currentEndMinX + ", " + currentEndMinY + ")");
-
     // Drawing the line between those coordinates  
-    ctx.strokeStyle = "rgb(255, 255, 255)";
+    setFillStyle("black");
     ctx.beginPath();
     ctx.moveTo(currentStartMinX, currentStartMinY);
     ctx.lineTo(currentEndMinX, currentEndMinY);
@@ -407,11 +400,11 @@ function makeNewNode(point)
     currentID++;
 
     // Drawing the node
-    changeFillStyle("white");
+    setFillStyle("white");
     ctx.fillRect(point.x - 15, point.y - 15, 30, 30);
     
     // Drawing the ID 
-    changeFillStyle("black");
+    setFillStyle("black");
     if (currentNode.id <= 9)
         ctx.fillText("" + currentNode.id, currentNode.x + 9, currentNode.y + 22);
     else 
@@ -419,7 +412,7 @@ function makeNewNode(point)
 }
 
 // Makes code much more readable 
-function changeFillStyle(strInput)
+function setFillStyle(strInput)
 {
     if (strInput.toLowerCase() === "gray" || strInput.toLowerCase() === "grey") ctx.fillStyle = "rgb(200, 200, 200)";
     else if (strInput.toLowerCase() === "black") ctx.fillStyle = "rgb(0, 0, 0)";
@@ -441,11 +434,11 @@ function selectNode(point)
                 currentlySelectedNodeID = j;
 
                 // Redrawing the shape itself 
-                changeFillStyle("black");
+                setFillStyle("black");
                 ctx.fillRect(nodeList[j].x, nodeList[j].y, 30, 30);
 
                 // Redrawing the number
-                changeFillStyle("black");
+                setFillStyle("black");
                 if (nodeList[j].id <= 9)
                     ctx.fillText("" + nodeList[j].id, nodeList[j].x + 9, nodeList[j].y + 22);
                 else 
@@ -457,7 +450,7 @@ function selectNode(point)
             ctx.fillRect(nodeList[i].x, nodeList[i].y, 30, 30);
 
             // Drawing the number inside 
-            changeFillStyle("black");
+            setFillStyle("black");
             if (nodeList[i].id <= 9)
                 ctx.fillText("" + nodeList[i].id, nodeList[i].x + 9, nodeList[i].y + 22);
             else 
@@ -477,7 +470,7 @@ function deleteNode(point)
             point.y - nodeList[i].y < 30 && point.y - nodeList[i].y >= 0)
         {
             // Drawing over that node with a gray rectangle to remove it from view
-            changeFillStyle("gray");
+            setFillStyle("gray");
             ctx.fillRect(nodeList[i].x, nodeList[i].y, 30, 30);
 
             // Removing that node from the actual array 
