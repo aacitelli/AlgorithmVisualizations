@@ -390,6 +390,16 @@ function absoluteToCanvas(point)
 
 function makeNewNode(point)
 {
+    // Checking if that would make the new node overlap a current one
+    for (let i = 0; i < nodeList.length; i++)
+    {
+        if (distance(point.x, point.y, nodeList[i].x, nodeList[i].y) <= 40)
+        {
+            console.error("Nodes cannot visually overlap! Not creating node.");
+            return;
+        }
+    }
+
     // Note - No aliasing should occur here because currentID is a primitive type (not an object/reference type)
     // Predeclaring node before adding to array because we use it throughout this method 
     // 15px offset is so that where they click is the middle of the square and not the top left like it normally would 
@@ -427,8 +437,7 @@ function selectNode(point)
     // Looking for that node in our list 
     for (let i = 0; i < nodeList.length; i++)
     {
-        if (point.x - nodeList[i].x < 30 && point.x - nodeList[i].x >= 0 &&
-            point.y - nodeList[i].y < 30 && point.y - nodeList[i].y >= 0)
+        if (distance(point.x, point.y, nodeList[i].x, nodeList[i].y) <= 20)
         {
             // Re-drawing every node so they all appear unselected 
             for (let j = 0; j < nodeList.length; j++)
@@ -437,27 +446,31 @@ function selectNode(point)
                 currentlySelectedNodeID = j;
 
                 // Redrawing the shape itself 
-                setFillStyle("black");
-                ctx.fillRect(nodeList[j].x, nodeList[j].y, 30, 30);
+                setFillStyle("white");
+                ctx.beginPath();
+                ctx.arc(nodeList[i].x, nodeList[i].y, 20, 0, 2 * Math.PI);
+                ctx.fill();
 
                 // Redrawing the number
                 setFillStyle("black");
-                if (nodeList[j].id <= 9)
-                    ctx.fillText("" + nodeList[j].id, nodeList[j].x + 9, nodeList[j].y + 22);
+                if (nodeList[i].id <= 9)
+                    ctx.fillText("" + nodeList[i].id, nodeList[i].x - 5, nodeList[i].y + 7);
                 else 
-                    ctx.fillText("" + nodeList[j].id, nodeList[j].x + 2, nodeList[j].y + 22);
+                    ctx.fillText("" + nodeList[i].id, nodeList[i].x - 13, nodeList[i].y + 7);
             }
 
             // Re-drawing over the selected node with a darker color 
             ctx.fillStyle = "rgb(150, 200, 200)";
-            ctx.fillRect(nodeList[i].x, nodeList[i].y, 30, 30);
+            ctx.beginPath();
+            ctx.arc(nodeList[i].x, nodeList[i].y, 20, 0, 2 * Math.PI);
+            ctx.fill();
 
             // Drawing the number inside 
             setFillStyle("black");
             if (nodeList[i].id <= 9)
-                ctx.fillText("" + nodeList[i].id, nodeList[i].x + 9, nodeList[i].y + 22);
+                ctx.fillText("" + nodeList[i].id, nodeList[i].x - 5, nodeList[i].y + 7);
             else 
-                ctx.fillText("" + nodeList[i].id, nodeList[i].x + 2, nodeList[i].y + 22);
+                ctx.fillText("" + nodeList[i].id, nodeList[i].x - 13, nodeList[i].y + 7);
 
             // We found the node, so break out of the loop 
             break;
