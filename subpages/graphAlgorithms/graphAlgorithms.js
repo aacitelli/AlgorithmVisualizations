@@ -11,7 +11,7 @@
 
 // The canvas that will display everything that's actually processed here in the code 
 var canvas = document.getElementById("canvas");
-var canvasWidth = document.body.clientWidth, canvasHeight = canvas.height;
+var canvasWidth = 500, canvasHeight = 500;
 
 // Controls drawing on the canvas itself 
 var ctx = canvas.getContext("2d");
@@ -59,14 +59,16 @@ var nodeList = [];
 
 document.addEventListener("click", function(event)
 {
+    // These are absolute click coordinates
     clickCoordinates = new Point(event.x, event.y);
-    updateCanvasSizing();
 
     // Checks if the click was inside the canvas 
     // Todo - Figure out how to make this not a hardcoded value, though theoretically a hardcoded value scales appropriately 
     if (clickCoordinates.x > (document.body.clientWidth - 500) / 2 && clickCoordinates.x < (document.body.clientWidth - 500) / 2 + canvasWidth && 
         clickCoordinates.y > 20 && clickCoordinates.y < 20 + canvasHeight)
     {
+        canvasCoordinates = absoluteToCanvas(clickCoordinates);
+
         switch(currentMode)
         {
             // Clear Screen
@@ -75,16 +77,17 @@ document.addEventListener("click", function(event)
             
             // New Node
             case 1: 
-                makeNewNode(absoluteToCanvas(new Point(clickCoordinates.x, clickCoordinates.y)));
+                makeNewNode(canvasCoordinates);
                 break;
 
             // Delete Node
             case 2:
-                deleteNode(absoluteToCanvas(new Point(clickCoordinates.x, clickCoordinates.y)));
+                deleteNode(canvasCoordinates);
                 break;
 
             // Select Node
             case 3: 
+                selectNode(canvasCoordinates);
                 break;
 
             // Run BFS on Selected Node
@@ -142,7 +145,7 @@ function absoluteToCanvas(point)
 function makeNewNode(point)
 {
     // Predeclaring node before adding to array because we use it throughout this method 
-    var currentNode = new Node(point.x, point.y, nodeList.length, []);
+    var currentNode = new Node(point.x - 15, point.y - 15, nodeList.length, []);
     nodeList.push(currentNode);
 
     ctx.fillStyle = "rgb(255, 255, 255)";
@@ -155,24 +158,61 @@ function makeNewNode(point)
     ctx.strokeStyle = "rgb(255, 255, 255)";
 
     // * Drawing the ID 
-    // One digit ID positioning
     if (currentNode.id <= 9)
-        ctx.fillText("" + currentNode.id, point.x - 6, point.y + 8);
-
-    // Two digit ID positioning
+        ctx.fillText("" + currentNode.id, currentNode.x + 9, currentNode.y + 22);
     else 
-        ctx.fillText("" + currentNode.id, point.x - 12, point.y + 8);
+        ctx.fillText("" + currentNode.id, currentNode.x + 2, currentNode.y + 22);
+}
+
+function selectNode(point)
+{
+    // Looking for that node in our list 
+    for (let i = 0; i < nodeList.length; i++)
+    {
+        if (point.x - nodeList[i].x < 30 && point.y - nodeList[i].y < 30)
+        {
+            // Re-drawing every node so they all appear unselected 
+            for (let j = 0; j < nodeList.length; j++)
+            {
+                // Redrawing the shape itself 
+                ctx.fillStyle = "rgb(255, 255, 255)";
+                ctx.fillRect(nodeList[j].x, nodeList[j].y, 30, 30);
+
+                // Redrawing the number
+                ctx.fillStyle="rgb(0, 0, 0)";
+                if (nodeList[j].id <= 9)
+                    ctx.fillText("" + nodeList[j].id, nodeList[j].x + 9, nodeList[j].y + 22);
+                else 
+                    ctx.fillText("" + nodeList[j].id, nodeList[j].x + 2, nodeList[j].y + 22);
+            }
+
+            // Re-drawing over the selected node with a darker color 
+            ctx.fillStyle = "rgb(150, 200, 200)";
+            ctx.fillRect(nodeList[i].x, nodeList[i].y, 30, 30);
+
+            // Drawing the number inside 
+            ctx.fillStyle="rgb(0, 0, 0)";
+            if (nodeList[i].id <= 9)
+                ctx.fillText("" + nodeList[i].id, nodeList[i].x + 9, nodeList[i].y + 22);
+            else 
+                ctx.fillText("" + nodeList[i].id, nodeList[i].x + 2, nodeList[i].y + 22);
+
+            // We found the node, so break out of the loop 
+            break;
+        }
+    }
 }
 
 function deleteNode(point)
 {
     for (let i = 0; i < nodeList.length; i++)
     {
-        if (point.x - nodeList[i].x < 30 && point.y - nodeList[i].y < 30)
+        if (point.x - nodeList[i].x < 30 && point.x - nodeList[i].x >= 0 &&
+            point.y - nodeList[i].y < 30 && point.y - nodeList[i].y >= 0)
         {
             // Drawing over that node with a gray rectangle to remove it from view
             ctx.fillStyle = "rgb(200, 200, 200)";
-            ctx.fillRect(nodeList[i].x - 15, nodeList[i].y - 15, 30, 30);
+            ctx.fillRect(nodeList[i].x, nodeList[i].y, 30, 30);
 
             // Removing that node from the actual array 
             console.log("Pre-Splice nodeList: ");
