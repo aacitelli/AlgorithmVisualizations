@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="./graphAlgorithms.css">
+    <title>BFS / DFS</title>
+</head>
+<body>
+    <h1 id="introHeader">BFS / DFS Visualization</h1>
+    <p>Use the buttons below the grid to select the current operation.</p>
+    <!-- Holds all the graph nodes, etc. -->
+    <canvas id="canvas"></canvas>    
+    <div class="buttonsContainer">
+        <button id="clearButton">Clear Grid</button>
+        <button id="newNodeButton">New Node</button>
+        <button id="deleteNodeButton">Delete Node</button>
+        <button id="nodeSelectButton">Select Node</button>
+        <button id="bfsButton">Perform BFS</button>
+        <button id="dfsButton">Perform DFS</button>
+    </div>
+    <h6 id="visitOrder"></h6>
+    <script src="graphAlgorithms.js"></script>
+
+    <!-- Todo - Program a visualization of the bfs/dfs tree -->
+</body>
+</html>
