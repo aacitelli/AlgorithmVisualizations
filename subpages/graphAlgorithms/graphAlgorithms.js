@@ -426,9 +426,24 @@ function makeNewNode(point)
 // Makes code much more readable 
 function setFillStyle(strInput)
 {
-    if (strInput.toLowerCase() === "gray" || strInput.toLowerCase() === "grey") ctx.fillStyle = "rgb(200, 200, 200)";
-    else if (strInput.toLowerCase() === "black") ctx.fillStyle = "rgb(0, 0, 0)";
-    else if (strInput.toLowerCase() === "white") ctx.fillStyle = "rgb(255, 255, 255)";
+    if (strInput.toLowerCase() === "gray" || strInput.toLowerCase() === "grey") 
+    {
+        ctx.fillStyle = "rgb(200, 200, 200)";
+        ctx.strokeStyle = "rgb(200, 200, 200)";
+    }
+
+    else if (strInput.toLowerCase() === "black") 
+    {
+        ctx.fillStyle = "rgb(0, 0, 0)";
+        ctx.strokeStyle = "rgb(0, 0, 0)";
+    }
+    
+    else if (strInput.toLowerCase() === "white") 
+    {
+        ctx.fillStyle = "rgb(255, 255, 255)";
+        ctx.strokeStyle = "rgb(255, 255, 255)";
+    }
+    
     else console.error("Tried to set fill color to unsupported value.");
 }
 
@@ -448,15 +463,15 @@ function selectNode(point)
                 // Redrawing the shape itself 
                 setFillStyle("white");
                 ctx.beginPath();
-                ctx.arc(nodeList[i].x, nodeList[i].y, 20, 0, 2 * Math.PI);
+                ctx.arc(nodeList[j].x, nodeList[j].y, 20, 0, 2 * Math.PI);
                 ctx.fill();
 
                 // Redrawing the number
                 setFillStyle("black");
                 if (nodeList[i].id <= 9)
-                    ctx.fillText("" + nodeList[i].id, nodeList[i].x - 5, nodeList[i].y + 7);
+                    ctx.fillText("" + nodeList[j].id, nodeList[j].x - 5, nodeList[j].y + 7);
                 else 
-                    ctx.fillText("" + nodeList[i].id, nodeList[i].x - 13, nodeList[i].y + 7);
+                    ctx.fillText("" + nodeList[j].id, nodeList[j].x - 13, nodeList[j].y + 7);
             }
 
             // Re-drawing over the selected node with a darker color 
