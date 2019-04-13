@@ -1,3 +1,14 @@
+/* Overall Todo: 
+
+    - Split this up into more files. I'd like to keep the file structure pretty organized because 
+        this'll be a pretty big website when I'm done, but too much JS in one file really hurts
+        the code in terms of readability, which is always a focus for me. 
+    - Make each "node" a circle instead of a square (which makes collision a little harder but
+        makes the page look a lot better IMHO). Collision just switches to distance formula, 
+        basically.
+
+*/
+
 // The canvas that will display everything that's actually processed here in the code 
 var canvas = document.getElementById("canvas");
 var canvasWidth = document.body.clientWidth, canvasHeight = canvas.height;
@@ -68,7 +79,8 @@ document.addEventListener("click", function(event)
                 break;
 
             // Delete Node
-            case 2: 
+            case 2:
+                deleteNode(absoluteToCanvas(new Point(clickCoordinates.x, clickCoordinates.y)));
                 break;
 
             // Select Node
@@ -121,18 +133,8 @@ function updateCanvasSizing()
 // The canvas is just straight-up a 20, 20 offset from the top left of the page, which makes this much easier
 function absoluteToCanvas(point)
 {
-    console.log("absoluteToCanvas input: ");
-    console.log("point.x: " + point.x);
-    console.log("point.y: " + point.y);
-
-    console.log("Client Width: " + document.body.clientWidth);
-    console.log("Pixels to the LEft: " + (document.body.clientWidth - 500) / 2);
-
     point.x -= (document.body.clientWidth - 500) / 2;
     point.y -= 20;
-
-    console.log("absolutetoCanvas return: ");
-    console.log(point);
 
     return point;
 }
@@ -160,6 +162,29 @@ function makeNewNode(point)
     // Two digit ID positioning
     else 
         ctx.fillText("" + currentNode.id, point.x - 12, point.y + 8);
+}
+
+function deleteNode(point)
+{
+    for (let i = 0; i < nodeList.length; i++)
+    {
+        if (point.x - nodeList[i].x < 30 && point.y - nodeList[i].y < 30)
+        {
+            // Drawing over that node with a gray rectangle to remove it from view
+            ctx.fillStyle = "rgb(200, 200, 200)";
+            ctx.fillRect(nodeList[i].x - 15, nodeList[i].y - 15, 30, 30);
+
+            // Removing that node from the actual array 
+            console.log("Pre-Splice nodeList: ");
+            console.log(nodeList);
+            nodeList.splice(i, 1);
+            console.log("Post-Splice nodeList: ");
+            console.log(nodeList);
+
+            // Because we found the correct node, break out of this loop 
+            break;
+        }
+    }
 }
 
 // * Button Graphical Utilities
