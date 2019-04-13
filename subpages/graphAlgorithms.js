@@ -4,6 +4,7 @@ var canvasWidth = document.body.clientWidth, canvasHeight = canvas.height;
 
 // Controls drawing on the canvas itself 
 var ctx = canvas.getContext("2d");
+ctx.font = "16pt Arial";
 
 // Used to show at the end what order the algorithm went in 
 var visitOrder = document.getElementById("visitOrder");
@@ -82,6 +83,9 @@ document.addEventListener("click", function(event)
             case 5: 
                 break;
 
+            case 6: 
+                break;
+
             // Error checking 
             default:
             {
@@ -103,6 +107,9 @@ function clearCanvas()
     updateCanvasSizing();
     ctx.fillStyle = "rgb(200, 200, 200)";
     ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+
+    // Gotta reset the node list 
+    nodeList = [];
 }
 
 function updateCanvasSizing()
@@ -132,13 +139,27 @@ function absoluteToCanvas(point)
 
 function makeNewNode(point)
 {
-    // Adds it on as the new last element and makes it have zero connections
-    nodeList.push(new Node(point.x, point.y, nodeList.length, []));
+    // Predeclaring node before adding to array because we use it throughout this method 
+    var currentNode = new Node(point.x, point.y, nodeList.length, []);
+    nodeList.push(currentNode);
 
     ctx.fillStyle = "rgb(255, 255, 255)";
     ctx.strokeStyle = "rgb(0, 0, 0)";
 
+    // Drawing the shape itself
     ctx.fillRect(point.x - 15, point.y - 15, 30, 30);
+
+    ctx.fillStyle = "rgb(0, 0, 0)";
+    ctx.strokeStyle = "rgb(255, 255, 255)";
+
+    // * Drawing the ID 
+    // One digit ID positioning
+    if (currentNode.id <= 9)
+        ctx.fillText("" + currentNode.id, point.x - 6, point.y + 8);
+
+    // Two digit ID positioning
+    else 
+        ctx.fillText("" + currentNode.id, point.x - 12, point.y + 8);
 }
 
 // * Button Graphical Utilities
