@@ -24,6 +24,7 @@ var drawConnectionButton = document.getElementById("drawConnectionButton");
     3 => Select Node 
     4 => Run DFS on Selected Node 
     5 => Run DFS on Selected Node
+    6 => Draw connections between nodes
 */
 var currentMode = 0;
 
@@ -51,7 +52,7 @@ document.addEventListener("click", function(event)
 
     // Checks if the click was inside the canvas 
     // Todo - Figure out how to make this not a hardcoded value, though theoretically a hardcoded value scales appropriately 
-    if (clickCoordinates.x > 20 && clickCoordinates.x < (document.body.clientWidth - 500) / 2 + canvasWidth && 
+    if (clickCoordinates.x > (document.body.clientWidth - 500) / 2 && clickCoordinates.x < (document.body.clientWidth - 500) / 2 + canvasWidth && 
         clickCoordinates.y > 20 && clickCoordinates.y < 20 + canvasHeight)
     {
         switch(currentMode)
@@ -131,16 +132,13 @@ function absoluteToCanvas(point)
 
 function makeNewNode(point)
 {
-    ctx.fillRect(5, 5, 20, 20);
-    console.log("Making a white square at canvas coordinates x = " + point.x + ", y = " + point.y);
     // Adds it on as the new last element and makes it have zero connections
     nodeList.push(new Node(point.x, point.y, nodeList.length, []));
 
     ctx.fillStyle = "rgb(255, 255, 255)";
     ctx.strokeStyle = "rgb(0, 0, 0)";
 
-    console.log("Filling Rectangle at canvas x = " + (point.x - 10) + ", y = " + (point.y - 10));
-    ctx.fillRect(point.x - 10, point.y - 10, 20, 20);
+    ctx.fillRect(point.x - 15, point.y - 15, 30, 30);
 }
 
 // * Button Graphical Utilities
