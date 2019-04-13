@@ -232,6 +232,17 @@ drawConnectionButton.addEventListener("click", function()
     updateActiveButton();
 });
 
+//! SEARCH ALGORITHMS
+function bfs(startNodeID)
+{
+
+}
+
+function dfs(startNodeID)
+{
+    
+}
+
 //! EDGE MANAGEMENT FUNCTIONS
 function lineExists(startNodeID, endNodeID)
 {
