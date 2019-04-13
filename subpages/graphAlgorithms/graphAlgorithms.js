@@ -497,12 +497,13 @@ function deleteNode(point)
 {
     for (let i = 0; i < nodeList.length; i++)
     {
-        if (point.x - nodeList[i].x < 30 && point.x - nodeList[i].x >= 0 &&
-            point.y - nodeList[i].y < 30 && point.y - nodeList[i].y >= 0)
+        if (distance(point.x, point.y, nodeList[i].x, nodeList[i].y) <= 20)
         {
             // Drawing over that node with a gray rectangle to remove it from view
             setFillStyle("gray");
-            ctx.fillRect(nodeList[i].x, nodeList[i].y, 30, 30);
+            ctx.beginPath();
+            ctx.arc(nodeList[i].x, nodeList[i].y, 20, 0, 2 * Math.PI);
+            ctx.fill();
 
             // Removing that node from the actual array 
             nodeList.splice(i, 1);
