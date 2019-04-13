@@ -1,6 +1,6 @@
 # AlgorithmVisualizations
 
-## What Is Ths?
+## What Is This?
 
 This project will eventually be a guide for pretty much any major algorithm I've learned, filled with interactive visualizations and extended writeups of each algorithm or data structure as I understand them. 
 
