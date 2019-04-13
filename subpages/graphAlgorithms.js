@@ -15,6 +15,7 @@ var deleteNodeButton = document.getElementById("deleteNodeButton");
 var nodeSelectButton = document.getElementById("nodeSelectButton");
 var bfsButton = document.getElementById("bfsButton");
 var dfsButton = document.getElementById("dfsButton");
+var drawConnectionButton = document.getElementById("drawConnectionButton");
 
 /*
     0 => Clear Grid 
@@ -26,6 +27,23 @@ var dfsButton = document.getElementById("dfsButton");
 */
 var currentMode = 0;
 
+// "Node" Definition
+// Todo - Make the nodes automatically readjust so that you don't have to give them a x,y coordinate
+// x => x-coordinate of node
+// y => y-coordinate of node 
+// id => A unique numerical identifier 
+// connections => An array of node id's that this one points to 
+function Node(x, y, id, connections)
+{
+    this.x = x;
+    this.y = y; 
+    this.id = id;
+    this.connections = connections;
+}
+
+// Holds currently taken ID numbers
+var nodeIDs = [];
+
 document.addEventListener("click", function(event)
 {
     clickCoordinates = new Point(event.x, event.y);
@@ -36,18 +54,15 @@ document.addEventListener("click", function(event)
     if (clickCoordinates.x > 20 && clickCoordinates.x < 20 + canvasWidth && 
         clickCoordinates.y > 20 && clickCoordinates.y < 20 + canvasHeight)
     {
-        console.log("Click is inside canvas.");
-
         switch(currentMode)
         {
-            // Clear Grid
-            case 0:
-                console.log(ctx);
-                break;
-
+            // Clear Screen
+            case 0: 
+                break; // Do nothing, as all behavior is controlled in the button's onClickListener 
+            
             // New Node
             case 1: 
-                clearCanvas();
+                makeNewNode(clickCoordinates.x, clickCoordinates.y);
                 break;
 
             // Delete Node
@@ -72,11 +87,6 @@ document.addEventListener("click", function(event)
                 console.error("currentMode was set to a value it really shouldn't be able to be set to.");
             }
         }
-    }
-
-    else 
-    {
-        console.log("Click is outside canvas.");
     }
 });
 
@@ -106,6 +116,7 @@ function convertAbsoluteCoordsToCanvasCoords(point)
     return new Point(point.x - 20, point.y - 20);
 }
 
+// * Button Graphical Utilities
 function updateActiveButton()
 {
     resetAllButtonColors();
@@ -130,6 +141,9 @@ function updateActiveButton()
         case 5: 
             dfsButton.style.backgroundColor = "rgb(0, 80, 190)";
             break;
+        case 6:
+            drawConnectionButton.style.backgroundcolor = "rgb(0, 80, 190)";
+            break;
         default: 
             console.log("currentMode was a weird value."); 
             break; 
@@ -144,47 +158,52 @@ function resetAllButtonColors()
     nodeSelectButton.style.backgroundColor = "rgb(0, 120, 255)";
     bfsButton.style.backgroundColor = "rgb(0, 120, 255)";
     dfsButton.style.backgroundColor = "rgb(0, 120, 255)";
+    drawConnectionButton.style.backgroundColor = "rgb(0, 120, 255)";
 }
 
-/* ------------------------------------------
-
-            EVENT LISTENERS
-
--------------------------------------------*/
-document.getElementById("clearButton").addEventListener("click", function()
+// * Button Event Listeners
+clearButton.addEventListener("click", function()
 {
     currentMode = 0;
-    clearCanvas():
+    clearCanvas();
     updateActiveButton();
 });
 
-document.getElementById("newNodeButton").addEventListener("click", function()
+newNodeButton.addEventListener("click", function()
 {
     currentMode = 1;
     updateActiveButton();
 });
 
-document.getElementById("deleteNodeButton").addEventListener("click", function()
+deleteNodeButton.addEventListener("click", function()
 {
     currentMode = 2;
     updateActiveButton();
 });
 
-document.getElementById("nodeSelectButton").addEventListener("click", function()
+nodeSelectButton.addEventListener("click", function()
 {
     currentMode = 3;
     updateActiveButton();
 });
 
-document.getElementById("bfsButton").addEventListener("click", function()
+bfsButton.addEventListener("click", function()
 {
     currentMode = 4;
     updateActiveButton();
 });
 
-document.getElementById("dfsButton").addEventListener("click", function()
+dfsButton.addEventListener("click", function()
 {
     currentMode = 5;
     updateActiveButton();
 });
+
+drawConnectionButton.addEventListener("click", function()
+{
+    currentMode = 6;
+    updateActiveButton();
+})
+
+
 
