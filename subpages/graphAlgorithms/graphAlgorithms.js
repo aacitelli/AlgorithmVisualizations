@@ -265,85 +265,13 @@ function drawLine(startNodeID, endNodeID)
         return true;
     } 
 
-    // Calculating start node corner positionings 
-    var startTopLeftX = nodeList[startNodeIndex].x;
-    var startTopLeftY = nodeList[startNodeIndex].y;
-    var startTopRightX = nodeList[startNodeIndex].x + 30;
-    var startTopRightY = nodeList[startNodeIndex].y;
-    var startBottomLeftX = nodeList[startNodeIndex].x;
-    var startBottomLeftY = nodeList[startNodeIndex].y + 30;
-    var startBottomRightX = nodeList[startNodeIndex].x + 30;
-    var startBottomRightY = nodeList[startNodeIndex].y + 30;
-
-    // By default, these are top left and get overwritten if any of the others end up being the most efficient 
-    var currentStartMinX = startTopLeftX, currentStartMinY = startTopLeftY, currentMinStartDistance = distance(startTopLeftX, startTopLeftY, nodeList[endNodeIndex].x, nodeList[endNodeIndex].y);
-    
-    // Checking if top right is closer
-    if (distance(startTopRightX, startTopRightY, nodeList[endNodeIndex].x, nodeList[endNodeIndex].y) < currentMinStartDistance)
-    {
-        currentStartMinX = startTopRightX;
-        currentStartMinY = startTopRightY;
-        currentMinStartDistance = distance(startTopRightX, startTopRightY, nodeList[startNodeIndex].x, nodeList[startNodeIndex].y);
-    }
-
-    // Checking if bottom left is closer
-    if (distance(startBottomLeftX, startBottomLeftY, nodeList[endNodeIndex].x, nodeList[endNodeIndex].y) < currentMinStartDistance)
-    {
-        currentStartMinX = startBottomLeftX;
-        currentStartMinY = startBottomLeftY;
-        currentMinStartDistance = distance(startBottomLeftX, startBottomLeftY, nodeList[startNodeIndex].x, nodeList[startNodeIndex].y);
-    }
-
-    // Checking if bottom right is closer 
-    if (distance(startBottomRightX, startBottomRightY, nodeList[endNodeIndex].x, nodeList[endNodeIndex].y) < currentMinStartDistance)
-    {
-        currentStartMinX = startBottomRightX;
-        currentStartMinY = startBottomRightY;
-        currentMinStartDistance = distance(startBottomRightX, startBottomRightY, nodeList[startNodeIndex].x, nodeList[startNodeIndex].y);
-    }
-
-    // Calculating end node corner positions 
-    var endTopLeftX = nodeList[endNodeIndex].x;
-    var endTopLeftY = nodeList[endNodeIndex].y;
-    var endTopRightX = nodeList[endNodeIndex].x + 30;
-    var endTopRightY = nodeList[endNodeIndex].y;
-    var endBottomLeftX = nodeList[endNodeIndex].x;
-    var endBottomLeftY = nodeList[endNodeIndex].y + 30;
-    var endBottomRightX = nodeList[endNodeIndex].x + 30;
-    var endBottomRightY = nodeList[endNodeIndex].y + 30;
-
-    // By default, these are top left and get overwritten if any of the others end up being the most efficient 
-    var currentEndMinX = endTopLeftX, currentEndMinY = endTopLeftY, currentMinEndDistance = distance(endTopLeftX, endTopLeftY, nodeList[startNodeIndex].x, nodeList[startNodeIndex].y);
-    
-    // Checking if top right is closer
-    if (distance(endTopRightX, endTopRightY, nodeList[startNodeIndex].x, nodeList[startNodeIndex].y) < currentMinEndDistance)
-    {
-        currentEndMinX = endTopRightX;
-        currentEndMinY = endTopRightY;
-        currentMinEndDistance = distance(endTopRightX, endTopRightY, nodeList[endNodeIndex].x, nodeList[endNodeIndex].y);
-    }
-
-    // Checking if bottom left is closer
-    if (distance(endBottomLeftX, endBottomLeftY, nodeList[startNodeIndex].x, nodeList[startNodeIndex].y) < currentMinEndDistance)
-    {
-        currentEndMinX = endBottomLeftX;
-        currentEndMinY = endBottomLeftY;
-        currentMinEndDistance = distance(endBottomLeftX, endBottomLeftY, nodeList[endNodeIndex].x, nodeList[endNodeIndex].y);
-    }
-
-    // Checking if bottom right is closer 
-    if (distance(endBottomRightX, endBottomRightY, nodeList[startNodeIndex].x, nodeList[startNodeIndex].y) < currentMinEndDistance)
-    {
-        currentEndMinX = endBottomRightX;
-        currentEndMinY = endBottomRightY;
-        currentMinEndDistance = distance(endBottomRightX, endBottomRightY, nodeList[endNodeIndex].x, nodeList[endNodeIndex].y);
-    }
+    // TODO - Do the necessary trig to start the line out at the edge of the circle instead of in the middle of the circle 
 
     // Drawing the line between those coordinates  
     setFillStyle("black");
     ctx.beginPath();
-    ctx.moveTo(currentStartMinX, currentStartMinY);
-    ctx.lineTo(currentEndMinX, currentEndMinY);
+    ctx.moveTo(nodeList[startNodeID].x, nodeList[startNodeID].y);
+    ctx.lineTo(nodeList[endNodeID].x, nodeList[endNodeID].y);
     ctx.stroke();  
 }
 
@@ -357,8 +285,7 @@ function getPointNodeID(point)
 {
     for (let i = 0; i < nodeList.length; i++)
     {
-        if (point.x - nodeList[i].x < 30 && point.x - nodeList[i].x >= 0 &&
-            point.y - nodeList[i].y < 30 && point.y - nodeList[i].y >= 0)
+        if (distance(point.x, point.y, nodeList[i].x, nodeList[i].y) <= 20)
         {
             // We found a valid node, so return that node's ID 
             return nodeList[i].id;
