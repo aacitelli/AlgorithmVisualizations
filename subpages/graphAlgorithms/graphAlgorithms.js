@@ -9,6 +9,7 @@ ctx.font = "16pt Arial";
 
 // Used to show at the end what order the algorithm went in 
 var visitOrder = document.getElementById("visitOrder");
+var debugOutput = document.getElementById("debugOutput");
 
 // Buttons are used a lot so they're defined globally 
 var clearButton = document.getElementById("clearButton");
@@ -124,7 +125,9 @@ document.addEventListener("mousedown", function(event)
             let candidateStartNodeID = getPointNodeID(canvasCoords);
             if (candidateStartNodeID === -1)
             {
+                debugOutput.textContent = "Start node not found!";
                 console.log("Start node not found!");
+
                 return;
             }
 
@@ -151,12 +154,15 @@ document.addEventListener("mouseup", function(event)
             let endNodeID = getPointNodeID(canvasCoords);
             if (endNodeID === -1)
             {
+                debugOutput.textContent = "End node not found!";
                 console.log("End node not found!");
+                
                 return;
             }
 
             if (endNodeID === startNodeID)
             {
+                debugOutput.textContent = "Start node cannot be the same as end node!   ";
                 console.log("Start node cannot be the same as end node!");
                 return;
             }
@@ -246,7 +252,9 @@ function lineExists(startNodeID, endNodeID)
         if (edgeList[i].startNodeID === startNodeID && edgeList[i].endNodeID === endNodeID ||
             edgeList[i].endNodeID === startNodeID && edgeList[i].startNodeID === endNodeID)
         {
+            debugOutput.textContent = "Edge already exists!";
             console.log("Edge already exists!");
+
             return true;
         }
     }
@@ -272,13 +280,17 @@ function drawLine(startNodeID, endNodeID)
 
     if (startNodeIndex === -1)
     {
+        debugOutput.textContent = "Could not find start node with given index.";
         console.error("Could not find start node with given index.");
+
         return true;
     }
 
     if (endNodeIndex === -1)
     {
+        debugOutput.textContent = "Could not find end node with given index.";
         console.error("Could not find end node with given index.");
+
         return true;
     } 
 
@@ -298,9 +310,6 @@ function drawLine(startNodeID, endNodeID)
     // The line was drawn, so we can add it to the edge list 
     edgeList.push({startNodeID: startNode.id, endNodeID: endNode.id});
     startNode.connections.push(endNode.id);
-
-    console.log("Edge List: ");
-    console.log(edgeList);
 }
 
 function getStartPoint(startPoint, endPoint)
@@ -362,7 +371,9 @@ function makeNewNode(point)
     {
         if (distance(point.x, point.y, nodeList[i].x, nodeList[i].y) <= 40)
         {
+            debugOutput.textContent = "Nodes cannot visually overlap! Not creating node.";
             console.error("Nodes cannot visually overlap! Not creating node.");
+
             return;
         }
     }
@@ -551,7 +562,12 @@ function setFillStyle(strInput)
         ctx.strokeStyle = "rgb(255, 255, 255)";
     }
     
-    else console.error("Tried to set fill color to unsupported value.");
+    else
+    {
+        debugOutput.textContent = "Tried to set fill color to unsupported value.";
+        console.error("Tried to set fill color to unsupported value.");
+        return;
+    }
 }
 
 function updateActiveButton()
@@ -582,6 +598,7 @@ function updateActiveButton()
             drawConnectionButton.style.backgroundColor = "rgb(0, 80, 190)";
             break;
         default: 
+            debugOutput.textContent = "currentMode was read as an unanticipated value.";
             console.log("currentMode was a weird value."); 
             break; 
     }
