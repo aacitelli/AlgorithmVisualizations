@@ -265,14 +265,112 @@ function drawLine(startNodeID, endNodeID)
         return true;
     } 
 
-    // TODO - Do the necessary trig to start the line out at the edge of the circle instead of in the middle of the circle 
+    var startNode = nodeList[startNodeIndex];
+    var endNode = nodeList[endNodeIndex];
+
+    var startPoint = getStartPoint(canvasCoordinateFix(new Point(startNode.x, startNode.y)), canvasCoordinateFix(new Point(endNode.x, endNode.y)));
+    var endPoint = getStartPoint(canvasCoordinateFix(new Point(endNode.x, endNode.y)), canvasCoordinateFix(new Point(startNode.x, startNode.y)));
 
     // Drawing the line between those coordinates  
     setFillStyle("black");
     ctx.beginPath();
-    ctx.moveTo(nodeList[startNodeID].x, nodeList[startNodeID].y);
-    ctx.lineTo(nodeList[endNodeID].x, nodeList[endNodeID].y);
+    ctx.moveTo(startPoint.x, 500 - startPoint.y);
+    ctx.lineTo(endPoint.x, 500 - endPoint.y);
     ctx.stroke();  
+}
+
+// Fixes canvas coordinates to follow the same sign conventions as the unit circle
+// This function is used for trig functions, which depend on a consistent frame of reference 
+function canvasCoordinateFix(topLeftPoint)
+{
+    return new Point(topLeftPoint.x, 500 - topLeftPoint.y);
+}
+
+function getDesiredAngle(startPoint, endPoint)
+{
+    var x_dot = endPoint.x - startPoint.x;
+    var y_dot = endPoint.y - startPoint.y;
+
+    console.log("x_dot: " + x_dot);
+    console.log("y_dot: " + y_dot);
+
+    // First Quadrant
+    if (x_dot >= 0 && y_dot >= 0)
+    {
+        return Math.atan(y_dot / x_dot);
+    }
+
+    // Second Quadrant
+    else if (x_dot < 0 && y_dot >= 0)
+    {
+        return degreeToRadian(90) + Math.atan(-x_dot / y_dot);
+    }
+
+    // Third Quadrant
+    else if (x_dot < 0 && y_dot < 0)
+    {
+        return degreeToRadian(180) + Math.atan(-y_dot / -x_dot);
+    }
+
+    // Fourth Quadrant 
+    else 
+    {
+        return degreeToRadian(270) + Math.atan(x_dot / -y_dot);
+    }
+}
+
+function getStartPoint(startPoint, endPoint)
+{
+    console.log("Start Origin: (" + startPoint.x + ", " + startPoint.y + ")");
+    console.log("End Origin: (" + endPoint.x + ", " + endPoint.y + ")");
+
+    // Thanks to https://math.stackexchange.com/questions/707673/find-angle-in-degrees-from-one-point-to-another-in-2d-space for the calculation formula 
+    var desiredAngle = getDesiredAngle(startPoint, endPoint) % 360;
+    console.log("Calculated Angle (in degrees): " + radianToDegree(desiredAngle));
+
+    // First Quadrant (0-90)
+    if (desiredAngle >= 0 && desiredAngle < 90)
+    {
+        // "Var" creates the variable in function scope, so it'll still be accessible outside of this if statement 
+        var xCoord = startPoint.x + (20 * Math.cos(desiredAngle));
+        var yCoord = startPoint.y + (20 * Math.sin(desiredAngle));
+    }
+
+    // Second Quadrant (90-180)
+    else if (desiredAngle >= 90 && desiredAngle < 180)
+    {
+        var xCoord = startPoint.x + (20 * Math.sin(desiredAngle));
+        var yCoord = startPoint.y + (20 * Math.cos(desiredAngle));
+    }
+
+    // Third Quadrant (180-270)
+    else if (desiredAngle >= 180 && desiredAngle < 270)
+    {
+        var xCoord = startPoint.x + (20 * Math.cos(desiredAngle));
+        var yCoord = startPoint.y + (20 * Math.sin(desiredAngle));
+    }
+
+    // Fourth Quadrant (270-360)
+    else
+    {
+        var xCoord = startPoint.x + (20 * Math.sin(desiredAngle));
+        var yCoord = startPoint.y + (20 * Math.cos(desiredAngle));
+    }
+
+    console.log("End X-Coord: " + xCoord);
+    console.log("End Y-Coord: " + yCoord); 
+    
+    return new Point(xCoord, yCoord);
+}
+
+function radianToDegree(radianValue)
+{
+    return radianValue * 180 / Math.PI;
+}
+
+function degreeToRadian(degreeValue)
+{
+    return degreeValue * Math.PI / 180;
 }
 
 // Distance formula 
