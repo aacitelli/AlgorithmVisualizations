@@ -393,7 +393,7 @@ function makeNewNode(point)
     // Note - No aliasing should occur here because currentID is a primitive type (not an object/reference type)
     // Predeclaring node before adding to array because we use it throughout this method 
     // 15px offset is so that where they click is the middle of the square and not the top left like it normally would 
-    var currentNode = new Node(point.x - 15, point.y - 15, currentID, []);
+    var currentNode = new Node(point.x, point.y, currentID, []);
     nodeList.push(currentNode);
 
     // Iterating currentID so that the next created node has a new ID 
@@ -401,14 +401,16 @@ function makeNewNode(point)
 
     // Drawing the node
     setFillStyle("white");
-    ctx.fillRect(point.x - 15, point.y - 15, 30, 30);
+    ctx.beginPath();
+    ctx.arc(point.x, point.y, 20, 0, 2 * Math.PI);
+    ctx.fill();
     
     // Drawing the ID 
     setFillStyle("black");
     if (currentNode.id <= 9)
-        ctx.fillText("" + currentNode.id, currentNode.x + 9, currentNode.y + 22);
+        ctx.fillText("" + currentNode.id, currentNode.x - 5, currentNode.y + 7);
     else 
-        ctx.fillText("" + currentNode.id, currentNode.x + 2, currentNode.y + 22);
+        ctx.fillText("" + currentNode.id, currentNode.x - 13, currentNode.y + 7);
 }
 
 // Makes code much more readable 
@@ -417,6 +419,7 @@ function setFillStyle(strInput)
     if (strInput.toLowerCase() === "gray" || strInput.toLowerCase() === "grey") ctx.fillStyle = "rgb(200, 200, 200)";
     else if (strInput.toLowerCase() === "black") ctx.fillStyle = "rgb(0, 0, 0)";
     else if (strInput.toLowerCase() === "white") ctx.fillStyle = "rgb(255, 255, 255)";
+    else console.error("Tried to set fill color to unsupported value.");
 }
 
 function selectNode(point)
